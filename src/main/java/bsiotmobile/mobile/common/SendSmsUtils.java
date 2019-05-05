@@ -22,7 +22,8 @@ public class SendSmsUtils {
     private  Logger logger= LoggerFactory.getLogger(this.getClass().getName());
     //注册时发送验证码
     public CommonResponse sendCheckCode(String phoneNum,String checkCode){
-        DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", "LTAI4O31cDMYSweo", "QyGLrEUGBX4RbQ6Owzn4K7X781T1Uo");
+        //todo 两个秘钥上阿里云找
+        DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", "", "");
         IAcsClient client = new DefaultAcsClient(profile);
 
         CommonRequest request = new CommonRequest();
