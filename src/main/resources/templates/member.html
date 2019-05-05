@@ -1,0 +1,91 @@
+<!doctype html >
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0"/>
+  <meta name="format-detection" content="telephone=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <link rel="stylesheet" href="css/index.css" th:href="@{css/index.css}">
+  <link rel="stylesheet" href="css/swiper.min.css" th:href="@{css/swiper.min.css}">
+  <script src="js/swiper.min.js" th:src="@{js/swiper.min.js}"></script>
+  <script src="js/index.js" th:src="@{js/index.js}"></script>
+  <script src="js/jquery-1.11.3.min.js" th:src="@{js/jquery-1.11.3.min.js}"></script>
+  <script>
+    function logout() {
+        if(confirm("确定退出当前账户？")){
+            $.ajax({
+               url:"http://localhost:8080/mobile/logout",
+                type:"post",
+                success:function (data) {
+                    if(data=="200"){
+                        alert("退出成功！");
+                        window.location.href="http://localhost:8080/mobile/tomember";
+                    }
+                }
+            })
+        }else{
+            return
+        }
+    }
+  </script>
+</head>
+<body style="background-color: #EEEEEE">
+  <div id="div0">
+    <a href="index.html"><span style="font-size: 28px;float: left;color: lightgray"><</span></a>
+      <span style="font-size: 28px;">个人中心<span/>
+  </div>
+    <div id="member_div1">
+      <img src="../static/img/userhead.png" th:src="@{/img/userhead.png}">
+      <a href="#">
+        <p th:text="${session.username}+' 你好'" th:if="${not #strings.isEmpty(session.username)}"></p>
+      </a>
+      <a th:href="@{/login.html}" th:if="${#strings.isEmpty(session.username)}"><p>登录/注册</p></a>
+    </div>
+  <hr>
+    <ul id="member_ul2">
+      <li>
+        <a>
+          <span>详细资料</span>
+          <span id="member_ul2_span">></span>
+        </a>
+      </li>
+      <hr>
+      <li>
+        <a>
+          <span>我的缴费记录</span>
+          <span id="member_ul2_span">></span>
+        </a>
+      </li>
+      <hr>
+      <li>
+        <a>
+          <span>我的报修记录</span>
+          <span id="member_ul2_span">></span>
+        </a>
+      </li>
+      <hr>
+      <li>
+        <a>
+          <span>联系管理员</span>
+          <span id="member_ul2_span">></span>
+        </a>
+      </li>
+      <hr>
+      <li>
+        <a  th:onclick="logout()"  >
+          <span th:if="not ${#strings.isEmpty(session.username)}">退出当前账户</span>
+        </a>
+      </li>
+      <hr>
+    </ul>
+
+
+  <footer th:include="footer::daohang">
+
+  </footer>
+</body>
+</html>

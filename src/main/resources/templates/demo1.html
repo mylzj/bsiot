@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0"/>
+  <meta name="format-detection" content="telephone=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <link rel="stylesheet" href="../static/css/index.css" th:href="@{css/index.css}">
+
+  <script th:src="@{js/mqttws31.js}" src="../static/js/mqttws31.js"></script>
+  <script th:src="@{js/usrCloud.js}" src="../static/js/usrCloud.js"></script>
+  <script th:src="@{js/jquery-3.2.1.min.js}" src="../static/js/jquery-3.2.1.min.js"></script>
+  <!--<script th:src="@{js/jquery-1.11.3.min.js}" src="js/jquery-1.11.3.min.js" ></script>-->
+  <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+  <!-- 可选的 Bootstrap 主题文件（一般不用引入） -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+  <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+</head>
+<body onload="conAndSub()">
+<div id="div0">
+  <a href="http://39.108.106.29/#/"><span style="font-size: 28px;float: left;color: lightgray"><</span></a>
+  <span style="font-size: 28px;">实时数据查看<span/>
+</div>
+<div class="panel panel-primary">
+  <div class="panel-heading">账号登录</div>
+  <div class="panel-body">
+    <input type="text" id="username" class="form-control" placeholder="用户名" value="linyt" aria-describedby="basic-addon1">
+    <input type="password" id="password" class="form-control" placeholder="密码" value="zxcvbnm" aria-describedby="basic-addon1">
+
+    <button class="btn btn-primary" onclick="connect()" id="cBt">连接</button>
+    <button class="btn btn-danger"onclick="disConnect()" id="disBt" style="display: none;text-align: center">断开连接</button>
+  </div>
+</div>
+<hr>
+<div class="panel panel-success">
+  <div class="panel-heading">设备ID信息绑定</div>
+  <div class="panel-body">
+    <div class="input-group input-group-sm">
+      <span class="input-group-addon" id="sizing-addon3">设备ID</span>
+      <input id="devId2" type="text" class="form-control" value="356566078222460" placeholder="设备ID" aria-describedby="sizing-addon3">
+    </div>
+    <input type="radio" id="devicesub" value="device" name="subscribeMode" checked="checked"/>单个设备
+    <input type="radio" id="accountsub" value="account" name="subscribeMode"/>全部设备<br>
+    <button class="btn btn-success" onclick="subscribeDevRaw()" id="subBt">订阅</button>
+    <button class="btn btn-danger" onclick="unSubscribeDevRaw()" id="disSubBt" style="display: none">取消订阅</button>
+  </div>
+</div>
+<div class="panel panel-info">
+  <div class="panel-heading">收到消息</div>
+  <fieldset style="width:100%;height:200px;">
+
+    <div id="rcvData2" style="height:140px;overflow-y:auto;">
+    </div>
+    已接收：<span id="rcvCount2">0</span><button class="btn btn-danger" onclick="clear4()">清空</button>
+  </fieldset>
+</div>
+<button onclick="test()">测试</button>
+<hr>
+<div class="panel panel-danger">
+  <div class="panel-heading">发送消息</div>
+  <textarea id="publishPayload" style="width:100%;height: 70px;padding:15px;box-sizing:border-box;">01 03 00 63 00 03 F5 D5</textarea>
+  <input type="checkbox" id="isPubHex" checked>16进制
+  <input class="btn btn-primary" type="button" onclick="publishRawToDev()" name="Publish" value="发送"/>
+</div>
+
+<div class="panel panel-danger">
+  <div class="panel-heading">门锁控制</div>
+  <input class="btn btn-primary" type="button" onclick="onLock()" name="Publish" value="开锁"/>
+  <input class="btn btn-danger" type="button" onclick="unLock()" name="Publish" value="上锁"/>
+  <input class="btn btn-primary" type="button" onclick="confirmStop()" name="Publish" value="确认"/>
+</div>
+<script lang="javascript">
+
+    //字符串转16进制数组
+    function stringToHex(str){
+        var val="";
+        for(var i = 0; i < str.length; i++){
+            if(val == "")
+                val = str.charCodeAt(i).toString(16);
+            else
+                val += str.charCodeAt(i).toString(16);
+        }
+        return val;
+    }
+  //滴卡开门校验函数
+  function chekcCard (str) {
+      var card={
+          "cardId":str
+      }
+      $.ajax({
+          // "http://39.108.106.29:8088/mobile/nbiot/checkCard"
+          url:"http://39.108.106.29:8088/mobile/nbiot/checkCard",
+          type:"POST",
+          data:JSON.stringify(card),
+          contentType:"application/json",
+          dataType:"json",
+          success:function (data) {
+              console.log(data);
+              var cardName=stringToHex(data.data.userName);
+              // comSend(str);
+              if(data.code==200){
+                  //调用开锁函数
+                  // onLock();
+                  //发送卡号所属姓名
+                  setTimeout(comSend(cardName),1000);
+
+              }
+          }
+      })
+  }
+
+  function conAndSub(){
+      connect();
+  }
+  /**
+   * 登录函数
+   */
+  function connect() {
+    // var username="linyt";
+    // var password="zxcvbnm";
+      var username=document.getElementById("username").value;
+      var password=document.getElementById("password").value;
+    // usrCloud.USR_Connect("linyt",hex_md5("zxcvbnm"));
+      usrCloud.USR_Connect(username,hex_md5(password));
+  }
+  /**
+   * 连接成功回调（云组态和云交换机共用）
+   */
+  function USR_onConnAck(event) {
+      console.log(event);
+      if(event.code==0) {
+          console.log("连接成功");
+          document.getElementById("cBt").style.display="none";
+          document.getElementById("disBt").style.display="";
+          subscribeDevRaw();
+      }else{
+          console.log("连接失败");
+      }
+  }
+  /**
+   * 取消登录（云组态和云交换机共用）
+   */
+  function disConnect() {
+    usrCloud.USR_DisConnect();
+  }
+  /**
+   * 连接断开回调（云组态和云交换机共用）
+   */
+  function USR_onConnLost(event) {
+      console.log(event);
+      alert("连接已断开")
+      document.getElementById("cBt").style.display="";
+      document.getElementById("disBt").style.display="none";
+  }
+  /**
+   * 订阅设备原始数据流（云交换机）
+   */
+  function subscribeDevRaw() {
+      var result;
+      if ($("#accountsub").is(":checked")) { //订阅账号下全部设备
+          result = usrCloud.USR_SubscribeUserRaw($("#account").val());
+      } else { //取消订阅单个设备
+          result = usrCloud.USR_SubscribeDevRaw($("#devId2").val());
+      }
+      $("#info3").text("订阅失败，错误代码:" + result);
+  }
+  /**
+   * 订阅成功回调（云组态和云交换机共用）
+   */
+  function USR_onSubscribeAck(event) {
+      console.log(event);
+      //判断返回函数名
+     if (event.SubFunName === 'SubDevRaw' || event.SubFunName === 'SubscribeUserRaw' || event.SubFunName === 'UnSubscribeDevRaw') { //云交换机
+          if (event.code === 0) {
+              console.log('订阅成功');
+              document.getElementById("subBt").style.display="none";
+              document.getElementById("disSubBt").style.display=""
+          } else {
+              console.log('订阅失败');
+          }
+      }
+  }
+  /**
+   * 取消订阅设备原始数据流（云交换机）
+   */
+  function unSubscribeDevRaw() {
+      var result;
+      if ($("#devicesub").is(":checked")) { //订阅账号下全部设备
+          result = usrCloud.USR_UnSubscribeDevRaw($("#devId2").val());
+      } else { //取消订阅单个设备
+          result = usrCloud.USR_UnSubscribeUserRaw($("#account").val());
+      }
+      $("#info3").text("取消订阅失败，错误代码:" + result);
+  }
+
+  /**
+   * 取消订阅成功回调（云组态和云交换机共用）
+   */
+  function USR_onUnSubscribeAck(event) {
+      console.log(event);
+      if (event.SubFunName === 'UnSubDevRaw' || event.SubFunName === 'UnSubscribeUserRaw' || event.SubFunName === 'UnSubscribeDevRaw') { //云交换机
+          if (event.code === 0) {
+              alert('取消订阅成功');
+              document.getElementById("subBt").style.display="";
+              document.getElementById("disSubBt").style.display="none"
+          } else {
+              alert('取消订阅失败');
+          }
+      }
+  }
+  /**
+   * 接收设备原始数据流回调（云交换机）
+   */
+  function USR_onRcvRawFromDev(event) {
+      $("#rcvCount2").text(parseInt($("#rcvCount2").text())+1);
+      console.log(event);
+      // alert(buf2HexStr(event.payload));
+      //  alert(event.payload[0]);
+      //  alert(String.fromCharCode(event.payload[0]));
+      if(event.payload.length==8){
+          var str="";
+          for(var i=0;i<event.payload.length;i++){
+              var str1="";
+              str1=String.fromCharCode(event.payload[i]);
+              str+=str1;
+          }
+          // alert(str);
+          chekcCard(str);
+      }
+
+      if(buf2HexStr(event.payload)==26){
+          confirmStop();
+      }
+      $("#rcvData2").append("<li>devId:" + event.devId + "\tdata:" +buf2HexStr(event.payload)+ "</li>")
+  }
+
+  /**
+   * 发送原始数据流（云交换机）
+   */
+  function publishRawToDev() {
+      var dataByte = [];
+      var devId = $('#devId2').val();
+      var payload = $('#publishPayload').val();
+      if ($('#isPubHex').is(':checked')) {
+          //十六机制字符串转Uint8Array格式的字节数组
+          dataByte = HexStr2Bytes(payload);
+      } else {
+          //获取消息UTF-8编码字节长度并创建Uint8Array字节数组
+          for (var i = 0; i < payload.length; i++) {
+              dataByte[i] = payload.charCodeAt(i);
+          }
+
+          stringToUTF8(payload, dataByte, 0);
+          alert(dataByte)
+      }
+      var result;
+      result = usrCloud.USR_PublishRawToDev(devId, dataByte);
+      if (result === 0) {
+          alert("发送成功")
+      }
+      if (result !== 0) {
+         alert("发送失败");
+      } else {
+
+      }
+  }
+
+  /**
+   * 开锁
+   *
+   */
+  function onLock() {
+      var dataByte1 = [];
+      var devId1 = $('#devId2').val();
+      var payload1 = "2D";
+
+          //十六机制字符串转Uint8Array格式的字节数组
+          dataByte1 = HexStr2Bytes(payload1);
+      var result;
+      result = usrCloud.USR_PublishRawToDev(devId1, dataByte1);
+      if (result === 0) {
+          console.log("开锁成功")
+      }
+      if (result !== 0) {
+          alert("开锁失败");
+      } else {
+
+      }
+  }
+  /**
+   * 上锁
+   *
+   */
+  function unLock() {
+      var dataByte2 = [];
+      var devId2 = $('#devId2').val();
+      var payload2 = "2B";
+
+      //十六机制字符串转Uint8Array格式的字节数组
+      dataByte2 = HexStr2Bytes(payload2);
+      var result;
+      result = usrCloud.USR_PublishRawToDev(devId2, dataByte2);
+      if (result === 0) {
+          alert("上锁成功")
+      }
+      if (result !== 0) {
+          alert("上锁失败");
+      } else {
+
+      }
+  }
+
+  /**
+   * 确认
+   *
+   */
+  function confirmStop() {
+      var dataByte3 = [];
+      var devId3 = $('#devId2').val();
+      var payload3 = "26";
+
+      //十六机制字符串转Uint8Array格式的字节数组
+      dataByte3 = HexStr2Bytes(payload3);
+      var result;
+      result = usrCloud.USR_PublishRawToDev(devId3, dataByte3);
+      if (result === 0) {
+          console.log("确认成功")
+      }
+      if (result !== 0) {
+          console.log("确认失败");
+      } else {
+
+      }
+  }
+  /**
+   * 公共发送函数
+   *
+   */
+  function comSend(str) {
+      var dataByte = [];
+      var devId = $('#devId2').val();
+      var payload = '4033'+str;
+
+      //十六机制字符串转Uint8Array格式的字节数组
+      dataByte = HexStr2Bytes(payload);
+      var result;
+      result = usrCloud.USR_PublishRawToDev(devId, dataByte);
+      if (result === 0) {
+          console.log("滴卡成功。并且成功发送名字")
+      }
+      if (result !== 0) {
+          console.log("滴卡失败");
+      } else {
+
+      }
+  }
+
+  var usrCloud = new UsrCloud();
+  //定义回调
+  var callback = {
+    USR_onConnAck: USR_onConnAck,
+    USR_onConnLost: USR_onConnLost,
+    USR_onSubscribeAck: USR_onSubscribeAck,
+    USR_onUnSubscribeAck: USR_onUnSubscribeAck,
+    // USR_onRcvParsedDataPointPush: USR_onRcvParsedDataPointPush,
+    // USR_onRcvParsedOptionResponseReturn: USR_onRcvParsedOptionResponseReturn,
+    // USR_onRcvParsedDevStatusPush: USR_onRcvParsedDevStatusPush,
+    USR_onRcvRawFromDev: USR_onRcvRawFromDev
+    // USR_onRcvParsedDevAlarmPush: USR_onRcvParsedDevAlarmPush
+  };
+  //初始化
+  usrCloud.Usr_Init("clouddata.usr.cn", 8080, 2, callback);
+  function clear4(){
+      $("#rcvData2").html("");
+      $("#rcvCount2").text(0);
+  }
+</script>
+</body>
+</html>

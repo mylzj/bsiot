@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="bsiotmobile.mobile.mapper.MbCardRecordMapper">
+
+
+    <insert id="addCardRecord">
+        insert into mb_card_record(
+        user_id,user_name,created_at
+        )values (
+        #{eo.userId},#{eo.userName},#{eo.createdAt}
+        )
+    </insert>
+
+    <select id="findCardRecordList" resultType="bsiotmobile.mobile.eo.MbCardRecord">
+        select * from mb_card_record where user_id=#{userId} order by created_at desc ;
+    </select>
+
+    <delete id="deleteCardRecordById">
+        delete from mb_card_record where id=#{id};
+    </delete>
+</mapper>

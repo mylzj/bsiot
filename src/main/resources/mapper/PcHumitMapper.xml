@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bsiotmobile.mobile.mapper.PcHumitMapper">
+
+    <insert id="addHumitData">
+        insert into pc_humit(
+        id,`h_data`,created_at,created_by,updated_at,updated_by,dr
+        ) values (
+        #{eo.id},#{eo.hData},#{eo.createdAt},#{eo.createdBy},#{eo.updatedAt},#{eo.updatedBy},#{eo.dr}
+        )
+    </insert>
+    <select id="findHumitDataList" resultType="bsiotmobile.mobile.eo.PcHumit">
+        select * from pc_humit where dr=0 order by created_at
+    </select>
+    <!--<select id="findUser" resultType="bsiotmobile.mobile.eo.User">-->
+        <!--select * from user1 where id=#{id}-->
+    <!--</select>-->
+    <delete id="deletedHumitById">
+        delete from pc_humit where id=#{id}
+    </delete>
+
+</mapper>

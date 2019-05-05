@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bsiotmobile.mobile.mapper.NbCardMapper">
+
+    <select id="checkCard" resultType="bsiotmobile.mobile.eo.NbCard">
+        select * from nb_card where card_id=#{cardId}
+    </select>
+    <!--<select id="findUserByName" resultType="bsiotmobile.mobile.eo.User">-->
+        <!--select * from user1 where name=#{name}-->
+    <!--</select>-->
+</mapper>

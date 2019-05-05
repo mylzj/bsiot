@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bsiotmobile.mobile.mapper.PcrRepairMapper">
+
+    <select id="findRepairList" resultType="bsiotmobile.mobile.eo.MbRepair">
+        select * from mb_repair
+        <where>
+          <if test="eo.userId !=null and eo.userId!= ''">
+            user_id=#{eo.userId}
+          </if>
+            <if test="eo.status !=null and eo.status!= ''">
+              and  `status`=#{eo.status}
+            </if>
+            <if test="eo.name !=null and eo.name!= ''">
+                and  `name`=#{eo.name}
+            </if>
+            <if test="eo.phoneNum !=null and eo.phoneNum!= ''">
+                and  `phone_num`=#{eo.phoneNum}
+            </if>
+            and dr=0
+        </where>
+    </select>
+
+    <!--<select id="findRepairDetail" resultType="bsiotmobile.mobile.eo.MbRepair">-->
+        <!--select * from mb_repair where `id`=#{id}-->
+    <!--</select>-->
+    <!---->
+    <update id="updateRepairStatusByAdmin">
+        update mb_repair set `status`=#{status} where id=#{id}
+    </update>
+</mapper>

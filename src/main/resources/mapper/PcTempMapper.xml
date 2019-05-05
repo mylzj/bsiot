@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bsiotmobile.mobile.mapper.PcTempMapper">
+
+    <insert id="addTempData">
+        insert into pc_temp(
+        id,`t_data`,created_at,created_by,updated_at,updated_by,dr
+        ) values (
+        #{eo.id},#{eo.tData},#{eo.createdAt},#{eo.createdBy},#{eo.updatedAt},#{eo.updatedBy},#{eo.dr}
+        )
+    </insert>
+    <select id="findTempDataList" resultType="bsiotmobile.mobile.eo.PcTemp">
+        select * from pc_temp where dr=0 order by created_at
+    </select>
+
+    <delete id="deletedTempById">
+        delete from pc_temp where id=#{id}
+    </delete>
+    <!--<select id="findUser" resultType="bsiotmobile.mobile.eo.User">-->
+        <!--select * from user1 where id=#{id}-->
+    <!--</select>-->
+
+
+</mapper>

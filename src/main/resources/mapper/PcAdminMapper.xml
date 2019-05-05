@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bsiotmobile.mobile.mapper.PcAdminMapper">
+
+
+    <insert id="addAdmin">
+        insert into admin(
+        `name`,password,`level`,created_by,created_at
+        )values (
+        #{eo.name},#{eo.password},#{eo.level},#{eo.createdBy},#{eo.createdAt}
+        )
+    </insert>
+
+    <select id="loginAdmin" resultType="bsiotmobile.mobile.eo.PcAdmin">
+        select * from admin where `name`=#{name}
+
+    </select>
+
+    <select id="findAdminList" resultType="bsiotmobile.mobile.eo.PcAdmin">
+        select * from admin
+    </select>
+
+    <update id="updateAdminById">
+        update admin
+        <set>
+            <if test="eo.name != null and eo.name !=''">
+                `name`=#{eo.name},
+            </if>
+            <if test="eo.password != null and eo.password !=''">
+                password=#{eo.password},
+            </if>
+            <if test="eo.level != null and eo.level !=''">
+                `level`=#{eo.level},
+            </if>
+            <if test="eo.createdBy != null and eo.createdBy !=''">
+                `created_by`=#{eo.createdBy},
+            </if>
+
+        </set>
+        <where>
+            id=#{eo.id}
+        </where>
+    </update>
+
+    <delete id="deleteAdminById">
+        delete from admin where id=#{id}
+    </delete>
+</mapper>

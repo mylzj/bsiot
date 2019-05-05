@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bsiotmobile.mobile.mapper.MbCommentMapper">
+
+   <insert id="addComment">
+       insert into mb_comment(
+       id,user_id,d_id,`content`,`user_name`,created_at,created_by,updated_at,updated_by,dr
+       ) values(
+       #{eo.id},#{eo.userId},#{eo.dId},#{eo.content},#{eo.userName},#{eo.createdAt},#{eo.createdBy},#{eo.updatedAt},#{eo.updatedBy},#{eo.dr}
+       )
+   </insert>
+
+    <select id="findCommentListByDid" resultType="bsiotmobile.mobile.eo.MbComment">
+        select * from mb_comment where d_id=#{did} and dr=0 order by created_at
+    </select>
+</mapper>

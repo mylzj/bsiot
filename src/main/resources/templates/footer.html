@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0"/>
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="stylesheet" href="css/index.css" th:href="@{css/index.css}">
+    <link rel="stylesheet" href="css/swiper.min.css" th:href="@{css/swiper.min.css}">
+    <script src="js/swiper.min.js" th:src="@{js/swiper.min.js}"></script>
+    <script src="js/index.js" th:src="@{js/index.js}"></script>
+
+</head>
+<body>
+<footer th:fragment="daohang">
+    <div class="nav">
+        <ul>
+            <li>
+                <a href="/index" th:href="@{/index.html}"><span><img src="../static/img/button1.png" th:src="@{/img/button1.png}" height="20"></span><span>首页</span></a>
+            </li>
+            <li >
+                <a th:href="@{/repair.html}"><span><img src="../static/img/button4.png" th:src="@{/img/button1.png}" height="20" ></span><span>实时数据</span></a>
+            </li>
+            <li>
+                <a th:href="@{/login.html}"><span><img src="../static/img/button3.png" th:src="@{/img/button1.png}" height="20"></span><span>小区动态</span></a>
+            </li>
+            <li>
+                <a th:href="@{/member.html}"}><span><img src="../static/img/button2.png" th:src="@{/img/button1.png}" height="20"></span><span>个人中心</span></a>
+            </li>
+        </ul>
+    </div>
+</footer>
+</body>
+</html>

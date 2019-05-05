@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bsiotmobile.mobile.mapper.MbUserRepairMapper">
+    <!--private String userId;-->
+    <!--//用户名称-->
+    <!--private String name;-->
+    <!--//申报人名称-->
+    <!--private String phoneNum;-->
+    <!--//保修单状态，状态：审核中，已取消，已审核，已完成-->
+    <!--private String status;-->
+    <!--//上传图片-->
+    <!--private String imgUrl;-->
+    <!--//详细描述-->
+    <!--private String detail;-->
+    <!--//预约时间,存进数据库的-->
+    <!--private Date preTime;-->
+    <!--//前端传过来的预约时间-->
+    <!--private String preTimeDto;-->
+    <!--//门牌号-->
+    <!--private String houseNum;-->
+
+    <!--private String id;-->
+    <!--private String createdBy;-->
+    <!--private String updatedBy;-->
+    <!--private Date createdAt;-->
+    <!--private Date updatedAt;-->
+    <!--private Integer dr;-->
+    <resultMap id="RepairMap" type="bsiotmobile.mobile.eo.MbRepair">
+        <id property="id" column="id"></id>
+        <result property="userId" column="user_id"></result>
+        <result property="phoneNum" column="phone_num"></result>
+        <result property="imgUrl" column="img_url"></result>
+        <result property="preTime" column="pre_time"></result>
+        <result property="houseNum" column="house_num"></result>
+        <result property="createdBy" column="created_by"></result>
+        <result property="updatedBy" column="updated_by"></result>
+        <result property="createdAt" column="created_at"></result>
+        <result property="updatedAt" column="updated_at"></result>
+    </resultMap>
+
+    <insert id="addRepair">
+        insert into mb_repair(
+        id,user_id,status,img_url,detail,pre_time,created_at,created_by,updated_at,
+        updated_by,dr,`name`,phone_num,house_num
+        ) values (
+        #{eo.id},#{eo.userId},#{eo.status},#{eo.imgUrl},#{eo.detail},#{eo.preTime},
+        #{eo.createdAt},#{eo.createdBy},#{eo.updatedAt},#{eo.updatedBy},
+        0,#{eo.name},#{eo.phoneNum},#{eo.houseNum}
+        )
+    </insert>
+    <select id="findRepair" resultType="bsiotmobile.mobile.eo.MbRepair">
+        select * from mb_repair
+        <where>
+          <if test="eo.userId !=null and eo.userId!= ''">
+            user_id=#{eo.userId}
+          </if>
+            <if test="eo.status !=null and eo.status!= ''">
+              and  `status`=#{eo.status}
+            </if>
+            and dr=0
+        </where>
+    </select>
+
+    <select id="findRepairDetail" resultType="bsiotmobile.mobile.eo.MbRepair">
+        select * from mb_repair where `id`=#{id}
+    </select>
+
+    <select id="findAllRepairByStatus" resultType="bsiotmobile.mobile.eo.MbRepair">
+        select * from mb_repair where status=#{status}
+    </select>
+
+    <select id="findcompleteRepair" resultType="bsiotmobile.mobile.eo.MbRepair">
+        select * from mb_repair where status='completed' and maintainer_id=#{mid}
+    </select>
+
+    <update id="updateRepairByMaintainer">
+        update mb_repair set `status`=#{status},`maintainer_id`=#{mid} where id=#{id}
+    </update>
+</mapper>

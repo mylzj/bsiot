@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bsiotmobile.mobile.mapper.MbDynamicMapper">
+
+   <insert id="addDynamic">
+       insert into mb_dynamic(
+       id,user_id,`content`,`img_url`,`title`,`name`,`user_img_url`,created_at,created_by,updated_at,updated_by,dr
+       ) values(
+       #{eo.id},#{eo.userId},#{eo.content},#{eo.imgUrl},#{eo.title},#{eo.name},#{eo.userImgUrl},#{eo.createdAt},#{eo.createdBy},#{eo.updatedAt},#{eo.updatedBy},#{eo.dr}
+       )
+   </insert>
+
+    <select id="showDynamicList" resultType="bsiotmobile.mobile.eo.MbDynamic">
+        select * from mb_dynamic where dr=0 order by created_at desc
+    </select>
+
+    <delete id="deleteDynamicById">
+        delete from mb_dynamic where id=#{id}
+    </delete>
+</mapper>

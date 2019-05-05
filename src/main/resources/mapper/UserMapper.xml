@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bsiotmobile.mobile.mapper.UserMapper">
+
+    <insert id="addUser" >
+        insert into user1(
+        id,`name`,password
+        ) values (
+        #{eo.id},#{eo.name},#{eo.password}
+        )
+    </insert>
+    <select id="findUser" resultType="bsiotmobile.mobile.eo.User">
+        select * from user1 where id=#{id}
+    </select>
+
+    <select id="findUserByName" resultType="bsiotmobile.mobile.eo.User">
+        select * from user1 where name=#{name}
+    </select>
+</mapper>
