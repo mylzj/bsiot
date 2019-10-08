@@ -15,7 +15,7 @@ docker run --rm \
    -v $proj_home:/usr/src/mymaven \
    -w /usr/src/mymaven $img_mvn mvn clean install package -U
 
-sudo mv $proj_home/mobile/target/mobile-*.jar $proj_home/mobile/target/demo.jar # 兼容所有sh脚本
+sudo mv $proj_home/target/mobile-*.jar $proj_home/mobile/target/demo.jar # 兼容所有sh脚本
 docker build -t $img_output .
 
 
