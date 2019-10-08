@@ -23,7 +23,7 @@ mkdir -p $PWD/logs
 chmod 777 $PWD/logs
 
 # 删除容器
-docker rm -f bs-iot &> /dev/null
+docker rm -f mobile &> /dev/null
 
 version=`date "+%Y%m%d%H"`
 
