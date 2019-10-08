@@ -11,11 +11,11 @@ import org.springframework.context.annotation.Configuration;
  * @author drose
  * @date 2019/5/3 13:17
  */
-@Configuration
+//@Configuration
 public class RabbitMqConfig  {
 
-    @Bean
-    public MessageConverter messageConverter(){
-        return new Jackson2JsonMessageConverter();
-    }
+//    @Bean
+//    public MessageConverter messageConverter(){
+//        return new Jackson2JsonMessageConverter();
+//    }
 }
