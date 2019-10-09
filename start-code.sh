@@ -42,5 +42,5 @@ docker run -d --restart=on-failure:5 --privileged=true \
         -XX:+PrintGCDetails \
         -XX:+HeapDumpOnOutOfMemoryError \
         -Xloggc:logs/gc_$version.log \
-        -jar /home/demo.jar \
-          --spring.profiles.active="$springProfilesActive"
+        -jar /home/demo.jar
+
