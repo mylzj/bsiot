@@ -3,4 +3,4 @@ FROM fabric8/java-jboss-openjdk8-jdk
 
 USER root
 
-COPY target/mobile-0.0.1-SNAPSHOT.jar /home/
+COPY target/demo.jar /home/
